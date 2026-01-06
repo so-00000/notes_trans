@@ -1,16 +1,35 @@
-
 Sub Initialize
+	
+	Set getUtil = New Util
+	
+	' =========================
+	' 各設定
+	' =========================
+	
+	' ファイル出力先
+	Dim outDir As String
+	outDir = "C:\Users\UP0250892\Desktop\Note_test_ohno\output_DB\"
+	
 	
 	' ローカルNotesのDBディレクトリを取得
 	Dim session As New NotesSession
 	Dim dbDir As NotesDbDirectory	
 	Set dbDir = session.GetDbDirectory("")  ' "" = ローカル
 	
-	' CSV出力先
-	Dim csvPath As String
-	csvPath = "C:\temp\db_info.csv"
 	
-	' ローカルNotesのDB情報を取得	
-	Call GetDbInfo(dbDir, csvPath)	
+	' タイムスタンプ作成（処理内で一貫する）	
+	Dim ts As String
+	ts = getUtil.CreateTimeStamp()	
+	
+	
+	
+	' DB情報を取得	
+	Call A0_GetDbInfo(dbDir, outDir, ts)
+	
+	
+	
+	
+	Call B0_ExportDbFormCount(session, dbDir, outDir)
+	
 	
 End Sub

@@ -1,0 +1,63 @@
+Sub A0_GetDbInfo(dbDir As NotesDbDirectory, outDir As String, ts As String)
+	
+	' CSVファイル名
+	csvNm = "db_info.csv"
+	
+	' CSVファイルパス
+	csvPath = outDir & csvNm
+	
+	
+    ' =========================
+    ' 出力対象DB項目定義
+    ' =========================
+	
+	target_db_info("title")         = "TITLE"
+	target_db_info("filepath")      = "FILE_PATH"
+	target_db_info("is_template")   = "IS_TEMPLATE"
+	target_db_info("is_mail")       = "IS_MAIL_FILE"
+	target_db_info("size")          = "DB_SIZE"
+	target_db_info("doc_count")     = "DOCUMENT_COUNT"
+	target_db_info("last_modified") = "LAST_MODIFIED"
+	
+	
+	
+	Dim session As New NotesSession
+	Set stream = session.CreateStream
+	Call stream.Open(csvPath, "UTF-8")
+	Call stream.Truncate
+	
+    ' --- CSVヘッダ作成
+	
+	Forall headerName In target_db_info
+		header = header & headerName & ","
+	End Forall
+	
+	Call stream.WriteText(header & Chr(13) & Chr(10))
+	
+	
+	' DB1件目取得
+	Set db = dbDir.GetFirstDatabase(DATABASE)
+	
+	
+    ' --- CSVボディ作成
+	While Not db Is Nothing
+		
+		If db.IsOpen Or db.Open("", "") Then
+			
+			strLine = ""
+			
+			
+			Forall v In target_db_info
+				headerTag = Listtag(v) 
+				strLine = strLine & A1_GetDbValue(db, headerTag) & ","
+			End Forall
+			
+			Call stream.WriteText(strLine & Chr(13) & Chr(10))
+			
+		End If
+		
+		Set db = dbDir.GetNextDatabase
+	Wend
+	
+	Call stream.Close
+End Sub

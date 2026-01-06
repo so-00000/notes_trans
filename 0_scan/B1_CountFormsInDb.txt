@@ -1,0 +1,53 @@
+Sub B1_CountFormsInDb(db As NotesDatabase, formCount List As Long)
+	
+	Dim allDocs As NotesDocumentCollection
+	Set allDocs = db.AllDocuments
+	
+	Dim doc As NotesDocument
+	Set doc = allDocs.GetFirstDocument
+	
+	While Not doc Is Nothing
+		
+        ' -------------------------
+        ' 返信文書（Response）除外
+        ' -------------------------
+		If doc.IsResponse Then
+			Set doc = allDocs.GetNextDocument(doc)
+			Goto ContinueLoop
+		End If
+		
+        ' -------------------------
+        ' プロファイル文書（Profile）除外
+        ' -------------------------
+		If doc.IsProfile Then
+			Set doc = allDocs.GetNextDocument(doc)
+			Goto ContinueLoop
+		End If
+		
+        ' -------------------------
+        ' Form名取得（Form → $Form の順で拾う）
+        ' -------------------------
+		Dim formName As String
+		formName = ""
+		
+		If doc.HasItem("Form") Then
+			formName = Cstr(doc.GetItemValue("Form")(0))
+		Elseif doc.HasItem("$Form") Then
+			formName = Cstr(doc.GetItemValue("$Form")(0))
+		End If
+		
+		formName = Trim$(formName)
+		If formName = "" Then formName = "(Formなし)"
+		
+		If Iselement(formCount(formName)) Then
+			formCount(formName) = formCount(formName) + 1
+		Else
+			formCount(formName) = 1
+		End If
+		
+		Set doc = allDocs.GetNextDocument(doc)
+		
+ContinueLoop:
+	Wend
+	
+End Sub

@@ -1,0 +1,39 @@
+Sub B1_BuildFormCount(db As NotesDatabase, formCount List As Long, totalCount As Long)
+	
+	totalCount = 0
+	
+	Dim allDocs As NotesDocumentCollection
+	Set allDocs = db.AllDocuments
+	
+	Dim doc As NotesDocument
+	Set doc = allDocs.GetFirstDocument
+	
+	While Not doc Is Nothing
+		
+		Dim formName As String
+		formName = ""
+		
+		' Form取得（読めない/例外でも落とさない）
+		On Error Resume Next
+		If doc.HasItem("Form") Then
+			formName = Cstr(doc.GetItemValue("Form")(0))
+		Else
+			formName = "(Formなし)"
+		End If
+		On Error Goto 0
+		
+		formName = Trim$(formName)
+		If formName = "" Then formName = "(Formなし)"
+		
+		If Iselement(formCount(formName)) Then
+			formCount(formName) = formCount(formName) + 1
+		Else
+			formCount(formName) = 1
+		End If
+		
+		totalCount = totalCount + 1
+		
+		Set doc = allDocs.GetNextDocument(doc)
+	Wend
+	
+End Sub

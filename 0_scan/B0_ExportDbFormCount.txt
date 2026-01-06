@@ -1,0 +1,51 @@
+Sub B0_ExportDbFormCount(session As NotesSession, dbDir As NotesDbDirectory, outDir As String)
+	
+	Dim csvPath As String
+	csvPath = outDir & "db_form_count.csv"
+	
+	Dim stream As NotesStream
+	Set stream = session.CreateStream
+	Call stream.Open(csvPath, "UTF-8")
+	Call stream.Truncate
+	
+	Call stream.WriteText("DB名,DBパス,フォーム名,ドキュメント件数" & Chr(13) & Chr(10))
+	
+	Dim formCount List As Long
+	
+	Dim db As NotesDatabase
+	Set db = dbDir.GetFirstDatabase(DATABASE)
+	
+	While Not db Is Nothing
+		
+		If db.IsOpen Or db.Open("", "") Then
+			
+            ' DBごとにカウント初期化
+			Erase formCount
+			
+			Call B1_CountFormsInDb(db, formCount)
+			
+			Forall cnt In formCount
+				Dim formName As String
+				formName = Listtag(cnt)
+				
+				Dim row(3) As Variant
+				row(0) = db.Title
+				row(1) = db.FilePath
+				row(2) = formName
+				row(3) = Cstr(cnt)
+				
+				Call getUtil.WriteCsv(stream, row)
+				
+			End Forall
+			
+		Else
+			Print "DB open failed: " & db.FilePath
+		End If
+		
+		Set db = dbDir.GetNextDatabase
+	Wend
+	
+	Call stream.Close
+	Print "Export done: " & csvPath
+	
+End Sub
