@@ -3,21 +3,30 @@ Sub Initialize
 	Dim session As New NotesSession
 	Dim dbDir As NotesDbDirectory
 	Dim db As NotesDatabase
+	Dim header As String
 	
     ' ローカルNotesのDBディレクトリ
 	Set dbDir = session.GetDbDirectory("")  ' "" = ローカル
 	
 	Print "=== ローカル Notes Database (NSF) 一覧 ==="
 	
+	header = "File Name,Title,File Path,Is Open,Replica ID,Template Name,Server,Created,Last Modified,Size (bytes)"
+	Print header
+	
 	Set db = dbDir.GetFirstDatabase(DATABASE)
 	While Not db Is Nothing
 		
-        ' NSFファイル名
-		Print "--------------------------------"
-		Print "File Name : " & db.FileName
-		Print "Title     : " & db.Title
-		Print "File Path : " & db.FilePath
-		Print "Is Open   : " & Cstr(db.IsOpen)
+        ' 表形式（CSV）で出力
+		Print EscapeCsv(db.FileName) & "," & _
+			  EscapeCsv(db.Title) & "," & _
+			  EscapeCsv(db.FilePath) & "," & _
+			  EscapeCsv(Cstr(db.IsOpen)) & "," & _
+			  EscapeCsv(db.ReplicaID) & "," & _
+			  EscapeCsv(db.TemplateName) & "," & _
+			  EscapeCsv(db.Server) & "," & _
+			  EscapeCsv(Cstr(db.Created)) & "," & _
+			  EscapeCsv(Cstr(db.LastModified)) & "," & _
+			  EscapeCsv(Cstr(db.Size))
 		
 		Set db = dbDir.GetNextDatabase
 	Wend
@@ -25,3 +34,13 @@ Sub Initialize
 	Print "=== 一覧出力 完了 ==="
 	
 End Sub
+
+Function EscapeCsv(value As String) As String
+	Dim escaped As String
+	escaped = Replace(value, Chr(34), Chr(34) & Chr(34))
+	If InStr(escaped, ",") > 0 Or InStr(escaped, Chr(34)) > 0 Or InStr(escaped, Chr(10)) > 0 Or InStr(escaped, Chr(13)) > 0 Then
+		EscapeCsv = Chr(34) & escaped & Chr(34)
+	Else
+		EscapeCsv = escaped
+	End If
+End Function
