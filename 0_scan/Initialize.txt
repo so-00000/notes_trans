@@ -6,7 +6,11 @@ Sub Initialize
 	Dim dbDir As NotesDbDirectory	
 	Set dbDir = session.GetDbDirectory("")  ' "" = ローカル
 	
+	' CSV出力先
+	Dim csvPath As String
+	csvPath = "C:\temp\db_info.csv"
+	
 	' ローカルNotesのDB情報を取得	
-	Call GetDbInfo(dbDir)	
+	Call GetDbInfo(dbDir, csvPath)	
 	
 End Sub
