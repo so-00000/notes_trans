@@ -1,8 +1,14 @@
-Sub GetDbInfo(dbDir As NotesDbDirectory)
+Sub GetDbInfo(dbDir As NotesDbDirectory, csvPath As String)
 	
     ' --- 出力項目定義
 	Dim target_db_info List As String
 	Call GetTargetDbInfo(target_db_info)
+	
+	Dim session As New NotesSession
+	Dim stream As NotesStream
+	Set stream = session.CreateStream
+	Call stream.Open(csvPath, "UTF-8")
+	Call stream.Truncate
 	
     ' --- CSVヘッダ作成
 	Dim header As String
@@ -11,7 +17,7 @@ Sub GetDbInfo(dbDir As NotesDbDirectory)
 		header = header & headerName & ","
 	End Forall
 	
-	Print header
+	Call stream.WriteText(header & Chr(13) & Chr(10))
 	
     ' --- CSVボディ作成
 	Dim db As NotesDatabase
@@ -31,10 +37,11 @@ Sub GetDbInfo(dbDir As NotesDbDirectory)
 				strLine = strLine & GetDbValue(db, headerTag) & ","
 			End Forall
 			
-			Print strLine
+			Call stream.WriteText(strLine & Chr(13) & Chr(10))
 		End If
 		
 		Set db = dbDir.GetNextDatabase
 	Wend
 	
+	Call stream.Close
 End Sub
