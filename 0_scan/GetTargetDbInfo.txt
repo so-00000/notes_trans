@@ -1,0 +1,15 @@
+Sub GetTargetDbInfo(target_db_info List As String)
+	
+    ' =========================
+    ' 出力対象DB項目定義
+    ' =========================
+	
+	target_db_info("title")         = "TITLE"
+	target_db_info("filepath")      = "FILE_PATH"
+	target_db_info("is_template")   = "IS_TEMPLATE"
+	target_db_info("is_mail")       = "IS_MAIL_FILE"
+	target_db_info("size")          = "DB_SIZE"
+	target_db_info("doc_count")     = "DOCUMENT_COUNT"
+	target_db_info("last_modified") = "LAST_MODIFIED"
+	
+End Sub

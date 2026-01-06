@@ -1,0 +1,40 @@
+Sub GetDbInfo(dbDir As NotesDbDirectory)
+	
+    ' --- 出力項目定義
+	Dim target_db_info List As String
+	Call GetTargetDbInfo(target_db_info)
+	
+    ' --- CSVヘッダ作成
+	Dim header As String
+	
+	Forall headerName In target_db_info
+		header = header & headerName & ","
+	End Forall
+	
+	Print header
+	
+    ' --- CSVボディ作成
+	Dim db As NotesDatabase
+	Set db = dbDir.GetFirstDatabase(DATABASE)
+	
+	While Not db Is Nothing
+		
+		If db.IsOpen Or db.Open("", "") Then
+			
+			Dim headerTag As String
+			Dim strLine As String
+			strLine = ""
+			
+			
+			Forall v In target_db_info
+				headerTag = Listtag(v) 
+				strLine = strLine & GetDbValue(db, headerTag) & ","
+			End Forall
+			
+			Print strLine
+		End If
+		
+		Set db = dbDir.GetNextDatabase
+	Wend
+	
+End Sub

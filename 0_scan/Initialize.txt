@@ -1,0 +1,12 @@
+
+Sub Initialize
+	
+	' ローカルNotesのDBディレクトリを取得
+	Dim session As New NotesSession
+	Dim dbDir As NotesDbDirectory	
+	Set dbDir = session.GetDbDirectory("")  ' "" = ローカル
+	
+	' ローカルNotesのDB情報を取得	
+	Call GetDbInfo(dbDir)	
+	
+End Sub

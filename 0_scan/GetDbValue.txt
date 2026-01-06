@@ -1,0 +1,29 @@
+Function GetDbValue(db As NotesDatabase, key As String) As String
+	
+	Select Case key
+	Case "title"
+		GetDbValue = db.Title
+		
+	Case "filepath"
+		GetDbValue = db.FilePath
+		
+	Case "istemplate"
+		' GetDbValue = Cstr(db.IsTemplate)
+		
+	Case "is_mail"
+		' GetDbValue = Cstr(db.IsMailFile)
+		
+	Case "size"
+		GetDbValue = Cstr(db.Size)
+		
+	Case "doc_count"
+		GetDbValue = Cstr(db.AllDocuments.Count)
+		
+	Case "last_modified"
+		GetDbValue = Cstr(db.LastModified)
+		
+	Case Else
+		GetDbValue = ""
+	End Select
+	
+End Function
