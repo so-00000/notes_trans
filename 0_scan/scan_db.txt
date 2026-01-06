@@ -1,0 +1,27 @@
+Sub Initialize
+	
+	Dim session As New NotesSession
+	Dim dbDir As NotesDbDirectory
+	Dim db As NotesDatabase
+	
+    ' ローカルNotesのDBディレクトリ
+	Set dbDir = session.GetDbDirectory("")  ' "" = ローカル
+	
+	Print "=== ローカル Notes Database (NSF) 一覧 ==="
+	
+	Set db = dbDir.GetFirstDatabase(DATABASE)
+	While Not db Is Nothing
+		
+        ' NSFファイル名
+		Print "--------------------------------"
+		Print "File Name : " & db.FileName
+		Print "Title     : " & db.Title
+		Print "File Path : " & db.FilePath
+		Print "Is Open   : " & Cstr(db.IsOpen)
+		
+		Set db = dbDir.GetNextDatabase
+	Wend
+	
+	Print "=== 一覧出力 完了 ==="
+	
+End Sub
